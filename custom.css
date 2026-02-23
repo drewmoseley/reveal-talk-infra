@@ -1,0 +1,325 @@
+/* --- Toradex-like color palette (approximate) --- */
+:root {
+  --toradex-blue:     #003b64;  /* dark blue */
+  --toradex-green:    #8dc63f;  /* accent green */
+  --toradex-grey:     #f5f5f5;  /* light background grey */
+
+  --color-text:       #333333;
+  --color-white:      #ffffff;
+  --color-border:     #dddddd;
+
+  --color-code-bg:    #f0f0f0;  /* inline code background */
+  --color-code-dark-bg: #272822; /* pre block background (Monokai) */
+  --color-code-dark-fg: #f8f8f2; /* pre block foreground (Monokai) */
+
+  /* Distance from slide title to body content */
+  --slide-title-gap:  70px;
+}
+
+/* --- Base reveal layout --- */
+.reveal {
+  background-color: var(--color-white);
+  color: var(--color-text);
+  text-align: left;
+  font-family: "Open Sans", system-ui, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", sans-serif;
+  font-size: 26px;
+}
+
+/* Emulate Toradex PPT margins:
+   - ~5% left/right (about 100–110px at 1920px width)
+   - ~3% top for the title area
+   - extra vertical breathing room at bottom
+*/
+.reveal .slides section {
+  /* top, right, bottom, left */
+  padding: 56px 112px 48px 112px;
+  box-sizing: border-box;
+  /* Ensure section fills full slide height so background image covers
+     edge-to-edge and scales correctly with content at any resolution */
+  height: 100%;
+}
+
+/* Remove any extra top margin on first child so the title sits at 3% */
+.reveal .slides section > *:first-child {
+  margin-top: 0;
+}
+
+/* Titles: Toradex blue, with predictable spacing to body text */
+.reveal h1 {
+  font-size: 1.9em;
+  color: var(--toradex-blue);
+}
+.reveal h2 {
+  font-size: 2.4em;
+  font-weight: 700;
+  color: var(--toradex-blue);
+}
+.reveal h3 {
+  font-size: 1.3em;
+  color: var(--toradex-blue);
+}
+
+/* Heading alignment and spacing on content slides.
+   No border-bottom — background image provides the green accent line. */
+.reveal .slides section:not(#title-slide) h1,
+.reveal .slides section:not(#title-slide) h2 {
+  text-align: left;
+  margin-bottom: var(--slide-title-gap);
+}
+
+/* List alignment and spacing.
+   Override reveal.js default of display:inline-block which causes centering. */
+.reveal ul,
+.reveal ol {
+  display: block;
+  text-align: left;
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+}
+.reveal li {
+  margin: 0.25em 0;
+}
+
+/* --- PPT-style title slide using extracted background --- */
+
+.reveal #title-slide {
+  box-sizing: border-box;
+
+  background-image: url("img/title-slide-background.png");
+  background-size: contain;
+  background-position: center right;
+  background-repeat: no-repeat;
+  background-color: var(--color-white);
+
+  /* Text like the PPT: dark Toradex blue on the white area */
+  color: var(--toradex-blue);
+  text-align: left;
+
+  /* Position the text block lower and into the left column */
+  padding: 280px 60px 80px 110px;  /* TOP RIGHT BOTTOM LEFT */
+}
+
+/* Keep title content in the left pane so it wraps before the image */
+.reveal #title-slide > * {
+  max-width: 40%;     /* widen or narrow to taste */
+}
+
+/* Title text styling similar to PPT */
+.reveal #title-slide h1 {
+  font-size: 2.6em;
+  font-weight: 600;
+  margin: 0 0 0.8em 0;
+  color: var(--toradex-blue);
+}
+
+.reveal #title-slide h2,
+.reveal #title-slide p,
+.reveal #title-slide a {
+  font-size: 1.3em;
+  margin: 0.3em 0;
+  color: var(--toradex-blue);
+  text-decoration: none;
+}
+
+.reveal #title-slide p.date {
+  font-size: 1.0em;
+}
+
+/* Optional: underline "Webinar:" like the PPT */
+.reveal #title-slide a {
+  text-decoration: underline;
+}
+
+/* Logo row on title slide */
+.reveal #title-slide .title-logos {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  margin-top: 1.6em;
+  max-width: 40%;
+}
+
+.reveal #title-slide .title-logos img {
+  height: 48px;
+  width: auto;
+}
+
+/* --- Speaker slide style (WITH YOU TODAY…) ---
+   Use in markdown: ## WITH YOU TODAY… {.speaker-slide} */
+.reveal .slides section.speaker-slide {
+  color: var(--color-text);
+}
+.reveal .slides section.speaker-slide h1,
+.reveal .slides section.speaker-slide h2 {
+  border: none;
+  color: var(--toradex-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0;
+}
+
+.reveal .slides section.speaker-slide .speaker-cards {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 100px;
+}
+
+.reveal .slides section.speaker-slide .speaker-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.reveal .slides section.speaker-slide .speaker-card img {
+  width: 280px;
+  height: 280px;
+  object-fit: cover;
+  margin-bottom: 20px;
+}
+
+.reveal .slides section.speaker-slide .speaker-name {
+  color: var(--toradex-blue) !important;
+  font-weight: bold;
+  font-size: 1.0em;
+  margin: 0.2em 0 0.1em 0;
+}
+
+.reveal .slides section.speaker-slide .speaker-role,
+.reveal .slides section.speaker-slide .speaker-company {
+  font-size: 0.8em;
+  margin: 0.1em 0;
+  color: var(--toradex-blue) !important;
+}
+
+.reveal .slides section.speaker-slide .speaker-location {
+  position: absolute;
+  bottom: 60px;
+  left: 75%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.7em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--toradex-blue);
+}
+
+/* --- Section divider slides (AGENDA, DEMO TIME!, etc.) ---
+   Use in markdown: ## DEMO TIME! {.section-divider} */
+.reveal .slides section.section-divider {
+  background-color: var(--toradex-blue);
+  color: var(--color-white);
+  text-align: left;
+}
+.reveal .slides section.section-divider h1,
+.reveal .slides section.section-divider h2 {
+  color: var(--color-white);
+  border: none;
+  font-size: 3.0em;
+  margin-bottom: 0.3em;
+}
+.reveal .slides section.section-divider p {
+  font-size: 1.3em;
+}
+
+/* No bottom bar — background image provides bottom decoration */
+
+/* --- Code blocks and inline code --- */
+
+/* Inline code only (not inside pre) */
+.reveal :not(pre) > code {
+  font-family: "Fira Code", "Source Code Pro", monospace;
+  font-size: 0.85em;
+  background-color: var(--color-code-bg);
+  padding: 0 0.2em;
+  border-radius: 3px;
+}
+
+/* Fenced / pre code blocks */
+.reveal pre code {
+  font-family: "Fira Code", "Source Code Pro", monospace;
+  display: block;
+  padding: 10px 12px;
+  border-radius: 4px;
+  background-color: var(--color-code-dark-bg);
+  color: var(--color-code-dark-fg);
+}
+
+/* --- Tables --- */
+.reveal table {
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+.reveal table th,
+.reveal table td {
+  border: 1px solid var(--color-border);
+  padding: 6px 10px;
+}
+.reveal table th {
+  background-color: var(--toradex-grey);
+  color: var(--color-text);
+}
+
+/* Background image on main content slides — on the section so it scales
+   with slide content at any resolution via reveal.js's transform.
+   Special slide types excluded: #title-slide, .thank-you, .section-divider, .speaker-slide */
+.reveal .slides section:not(#title-slide):not(.thank-you):not(.section-divider) {
+  background-image: url("img/main-slide-background.png");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* Torizon logo is baked into main-slide-background.png at top-right */
+
+/* --- Inline tool logo row --- */
+.reveal .slides section .tool-logos {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  margin-top: 1.2em;
+}
+.reveal .slides section .tool-logos img {
+  height: 48px;
+  width: auto;
+}
+
+/* --- Right-side scattered logo panel ---
+   Wrap images in <div class="right-logos">.  Each img is placed on a
+   vertical ellipse spanning the right ~42% of the slide via :nth-child
+   rules; small translateX nudges give a hand-placed feel.
+   To support a different count, add matching :nth-child rules below. */
+.reveal .slides section .right-logos {
+  position: absolute;
+  left: 55%;
+  right: 90px;
+  top: 120px;
+  bottom: 60px;
+}
+.reveal .slides section .right-logos img {
+  position: absolute;
+  height: 130px;
+  width: auto;
+}
+/* 5-logo layout: pentagon inscribed in a vertical ellipse.
+   Angles: -90°, -18°, 54°, 126°, 198° (72° apart).
+   left/top are % of the container box; translate adds the nudge. */
+.reveal .slides section .right-logos img:nth-child(1) { left: 38%; top:  2%; transform: translateX( 15px); } /* top         */
+.reveal .slides section .right-logos img:nth-child(2) { left: 65%; top: 22%; transform: translateX(-18px); } /* upper-right */
+.reveal .slides section .right-logos img:nth-child(3) { left: 55%; top: 70%; transform: translateX( 22px); } /* lower-right */
+.reveal .slides section .right-logos img:nth-child(4) { left: 12%; top: 70%; transform: translateX(-15px); } /* lower-left  */
+.reveal .slides section .right-logos img:nth-child(5) { left:  2%; top: 22%; transform: translateX( 10px); } /* upper-left  */
+
+/* --- Slide footnote --- */
+.reveal .slides section .slide-footnote {
+  position: absolute;
+  bottom: 48px;
+  left: 112px;
+  right: 112px;
+  text-align: left;
+  font-size: 0.72em;
+  color: var(--toradex-blue);
+  opacity: 0.75;
+}
