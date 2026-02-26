@@ -6,6 +6,7 @@
 #   HTML_OUT    := $(BUILD_DIR)/my-talk.html
 #   ORG_OUT     := $(BUILD_DIR)/my-talk.org
 #   TITLE_LOGOS := img/logo1.svg img/logo2.svg
+#   EXTRA_CSS   := talk-extras.css   # optional talk-specific stylesheet
 #   INFRA_DIR   := infra
 #   include $(INFRA_DIR)/Makefile.include
 #
@@ -40,6 +41,18 @@ REVEAL_TRANSITION ?= fade
 REVEAL_TEMPLATE   ?= $(INFRA_DIR)/revealjs-template.html
 CUSTOM_CSS        ?= $(INFRA_DIR)/custom.css
 
+# Optional talk-specific CSS loaded after custom.css.
+# Set EXTRA_CSS := path/to/extras.css in your wrapper Makefile before the include.
+EXTRA_CSS          ?=
+EXTRA_CSS_BASENAME  = $(notdir $(EXTRA_CSS))
+EXTRA_CSS_DEP       = $(if $(EXTRA_CSS),$(BUILD_DIR)/$(EXTRA_CSS_BASENAME),)
+EXTRA_CSS_FLAG      = $(if $(EXTRA_CSS),-c $(EXTRA_CSS_BASENAME),)
+
+ifneq ($(EXTRA_CSS),)
+$(BUILD_DIR)/$(EXTRA_CSS_BASENAME): $(EXTRA_CSS) | $(BUILD_DIR)
+	cp $< $@
+endif
+
 # Space-separated list of img/ paths to show as logos on the title slide.
 # Set this in your wrapper Makefile before the include.
 TITLE_LOGOS     ?=
@@ -71,12 +84,13 @@ $(BUILD_IMG_DIR)/%: $(IMG_DIR)/% | $(BUILD_IMG_DIR)
 $(REVEAL_BUILD_DIR): $(REVEAL_SRC_DIR) | $(BUILD_DIR)
 	cp -R $(REVEAL_SRC_DIR) $(REVEAL_BUILD_DIR)
 
-reveal: $(COMBINED_MD) $(BUILD_DIR)/custom.css $(BUILD_IMAGES) $(REVEAL_BUILD_DIR)
+reveal: $(COMBINED_MD) $(BUILD_DIR)/custom.css $(EXTRA_CSS_DEP) $(BUILD_IMAGES) $(REVEAL_BUILD_DIR)
 	$(PANDOC) $(COMBINED_MD) \
 	  -t revealjs \
 	  -s \
 	  --template $(REVEAL_TEMPLATE) \
 	  -c custom.css \
+	  $(EXTRA_CSS_FLAG) \
 	  -V theme=white \
 	  -V center=false \
 	  -V revealjs-url=$(REVEALJS_URL) \
