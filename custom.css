@@ -163,7 +163,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  margin-top: 100px;
+  margin-top: 40px;
 }
 
 .reveal .slides section.speaker-slide .speaker-card {
@@ -173,9 +173,9 @@
   text-align: center;
 }
 
-.reveal .slides section.speaker-slide .speaker-card img {
-  width: 280px;
-  height: 280px;
+.reveal .slides section.speaker-slide .speaker-card > img {
+  width: 200px;
+  height: 200px;
   object-fit: cover;
   margin-bottom: 20px;
 }
@@ -204,6 +204,45 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--toradex-blue);
+}
+
+.reveal .slides section.speaker-slide .speaker-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35em;
+  margin-top: 1em;
+  font-size: 0.72em;
+}
+
+.reveal .slides section.speaker-slide .contact-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  color: var(--toradex-blue);
+  text-decoration: none;
+}
+
+.reveal .slides section.speaker-slide .contact-link:hover {
+  text-decoration: underline;
+}
+
+.reveal .slides section.speaker-slide .contact-sicon {
+  width: 1.1em;
+  height: 1.1em;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.reveal .slides section.speaker-slide .contact-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1em;
+  height: 1.1em;
+  font-size: 1em;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 /* --- Section divider slides (AGENDA, DEMO TIME!, etc.) ---
