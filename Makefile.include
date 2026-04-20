@@ -84,11 +84,14 @@ $(BUILD_IMG_DIR)/%: $(IMG_DIR)/% | $(BUILD_IMG_DIR)
 $(REVEAL_BUILD_DIR): $(REVEAL_SRC_DIR) | $(BUILD_DIR)
 	cp -R $(REVEAL_SRC_DIR) $(REVEAL_BUILD_DIR)
 
+HIGHLIGHT_STYLE ?= $(INFRA_DIR)/solarized-dark.theme
+
 reveal: $(COMBINED_MD) $(BUILD_DIR)/custom.css $(EXTRA_CSS_DEP) $(BUILD_IMAGES) $(REVEAL_BUILD_DIR)
 	$(PANDOC) $(COMBINED_MD) \
 	  -t revealjs \
 	  -s \
 	  --template $(REVEAL_TEMPLATE) \
+	  --syntax-highlighting=$(HIGHLIGHT_STYLE) \
 	  -c custom.css \
 	  $(EXTRA_CSS_FLAG) \
 	  -V theme=white \
