@@ -362,3 +362,17 @@
   color: var(--toradex-blue);
   opacity: 0.75;
 }
+
+/* --- Two-column slide layout (.slide-columns / .slide-col-left / .slide-col-right) --- */
+.reveal .slides section .slide-columns {
+  display: flex;
+  gap: 2em;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.reveal .slides section .slide-col-left,
+.reveal .slides section .slide-col-right {
+  flex: 1;
+  min-width: 0;
+}

@@ -1,20 +1,20 @@
 # reveal-talk-infra — Claude guidance
 
 This directory is shared infrastructure for Reveal.js slide decks authored in
-Pandoc Markdown.  It is included in each talk repo as `infra/` (git submodule
-or copy).
+Pandoc Markdown.  It is included in each talk repo as `infra/` via a relative
+symlink (`ln -s ../reveal-talk-infra infra`).
 
 ---
 
 ## System overview
 
-```
+```text
 <talk-repo>/
   Makefile          # defines talk vars, then: include $(INFRA_DIR)/Makefile.include
   sections/         # NNN-slug.md slide files (three-digit prefix, sorted)
   img/              # images referenced from slides
   talk-extras.css   # talk-specific CSS loaded after infra/custom.css
-  infra/            # this repo (symlink or submodule)
+  infra/            # this repo (relative symlink → ../reveal-talk-infra)
     Makefile.include
     revealjs-template.html
     custom.css
@@ -27,8 +27,14 @@ or copy).
 
 ## Setting up a new talk
 
-1. Add this repo as `infra/` (submodule: `git submodule add <url> infra`).
-2. Create `Makefile` with at minimum:
+1. Add this repo as `infra/` via a relative symlink (preferred — all talks share one checkout, zero sync burden):
+
+```sh
+ln -s ../reveal-talk-infra infra
+git add infra
+```
+
+1. Create `Makefile` with at minimum:
 
 ```makefile
 BUILD_DIR   := build
@@ -36,25 +42,26 @@ HTML_OUT    := $(BUILD_DIR)/my-talk.html
 PDF_OUT     := $(BUILD_DIR)/my-talk.pdf
 ORG_OUT     := $(BUILD_DIR)/my-talk.org
 TITLE_LOGOS := img/logo1.png img/logo2.png   # space-separated, shown on title slide
-EXTRA_CSS   := talk-extras.css               # omit if no extra styles
+EXTRA_CSS   := talk-extras.css               # optional; omit if no extra styles
 INFRA_DIR   := infra
 include $(INFRA_DIR)/Makefile.include
 ```
 
 Optional Makefile overrides (before the include):
 
-| Variable           | Default       | Purpose                            |
-|--------------------|---------------|------------------------------------|
-| `SLIDES_DIR`       | `sections`    | where NNN-slug.md files live       |
-| `REVEAL_WIDTH`     | `1920`        | slide canvas width                 |
-| `REVEAL_HEIGHT`    | `1080`        | slide canvas height                |
-| `REVEAL_TRANSITION`| `fade`        | reveal.js transition               |
-| `REVEAL_TEMPLATE`  | infra template| pandoc HTML template               |
-| `CUSTOM_CSS`       | `infra/custom.css` | base CSS                      |
+| Variable            | Default            | Purpose                                                                |
+|---------------------|--------------------|------------------------------------------------------------------------|
+| `SLIDES_DIR`        | `sections`         | where NNN-slug.md files live                                           |
+| `REVEAL_WIDTH`      | `1920`             | slide canvas width                                                     |
+| `REVEAL_HEIGHT`     | `1080`             | slide canvas height                                                    |
+| `REVEAL_TRANSITION` | `fade`             | reveal.js transition                                                   |
+| `REVEAL_TEMPLATE`   | infra template     | pandoc HTML template                                                   |
+| `CUSTOM_CSS`        | `infra/custom.css` | base CSS                                                               |
+| `EXTRA_CSS`         | _(empty)_          | talk-specific CSS; copied to build/ and passed to pandoc automatically |
 
-3. Create `sections/001-intro.md` (see slide format below).
-4. Add `talk-extras.css` for talk-specific overrides.
-5. Run `make` to build.
+1. Create `sections/001-intro.md` (see slide format below).
+1. Add `talk-extras.css` for talk-specific overrides.
+1. Run `make` to build.
 
 ---
 
@@ -149,10 +156,10 @@ expressible in Markdown.
 
 ### Slide type modifiers (on the H2)
 
-| Class              | Usage                        | Effect                          |
-|--------------------|------------------------------|---------------------------------|
-| `.section-divider` | `## DEMO TIME! {.section-divider}` | Dark blue background, white text, large heading |
-| `.speaker-slide`   | `## WITH YOU TODAY… {.speaker-slide}` | Speaker bio layout          |
+| Class              | Usage                                     | Effect                                          |
+|--------------------|-------------------------------------------|-------------------------------------------------|
+| `.section-divider` | `## DEMO TIME! {.section-divider}`        | Dark blue background, white text, large heading |
+| `.speaker-slide`   | `## WITH YOU TODAY… {.speaker-slide}`     | Speaker bio layout                              |
 
 ### Layout components
 
@@ -213,3 +220,34 @@ background (baked into infra/custom.css).  The title slide uses
 
 Talk-specific CSS overrides go in `talk-extras.css`, loaded after `custom.css`
 via pandoc `-c` flags set in `Makefile.include` when `EXTRA_CSS` is defined.
+
+---
+
+## Auto-build hook (Claude Code)
+
+Claude Code's settings don't support subdirectory inheritance, so this hook
+cannot live in the infra repo and auto-apply.  Instead, add it once to your
+**user-level** `~/.claude/settings.json` — it fires for all talk repos and is
+fully cross-platform (no hardcoded paths):
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -f infra/Makefile.include ] && make reveal 2>/dev/null || true",
+            "statusMessage": "Building slides..."
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The guard `[ -f infra/Makefile.include ]` ensures the hook only fires inside a
+reveal-talk-infra–based repo and is a no-op everywhere else.
